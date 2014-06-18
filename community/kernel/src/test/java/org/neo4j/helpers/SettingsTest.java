@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
+
 import org.neo4j.graphdb.config.Setting;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 
@@ -76,6 +77,9 @@ public class SettingsTest
 
         Setting<List<Integer>> setting2 = setting( "foo", list( ",", INTEGER ), "1,2,3,4," );
         assertThat( setting2.apply( map( stringMap() ) ).toString(), equalTo( "[1, 2, 3, 4]" ) );
+
+        Setting<List<Integer>> setting3 = setting( "foo", list( ",", INTEGER ), "" );
+        assertThat( setting3.apply( map( stringMap() ) ).toString(), equalTo( "[]" ) );
     }
 
     @Test
