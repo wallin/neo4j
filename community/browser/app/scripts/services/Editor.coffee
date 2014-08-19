@@ -54,7 +54,7 @@ angular.module('neo4jApp.services')
           if input?.length > 0 and @history[0] isnt input
             @history.unshift(input)
             @history.pop() until @history.length <= Settings.maxHistory
-            localStorageService.add(storageKey, JSON.stringify(@history))
+            localStorageService.set(storageKey, JSON.stringify(@history))
           @historySet(-1)
 
         execCurrent: ->
