@@ -2,12 +2,16 @@ div(fullscreen)
   .outer
     include partials/frame-common-actions
     .inner
-      .view-result.account(ng-show='!frame.hasErrors')
-        span(ng-show='frame.isLoading') Initated login...
-        span(ng-show='!frame.isLoading', ng-bind-template="Logged in as {{currentUser.name}} ({{currentUser.email}})")
+      .view-result
+        .view-result-graph(ng-if='!frame.hasErrors')
+          .status-bar
+            .status
+              span(ng-show='!frame.isLoading', ng-bind-template="Logged in as {{currentUser.name}} ({{currentUser.email}})")
+              span(ng-show='frame.isLoading') Initated login...
 
-      .status-bar.error(ng-show='frame.hasErrors')
-        div
-          span
-            .icon-warning-sign
-            {{frame.errorText}}
+        .view-result-error.result(ng-if='frame.hasErrors')
+          .status-bar.error
+            .status
+              span
+                .icon-warning-sign
+                {{frame.errorText}}
