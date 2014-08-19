@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #baseURL = 'http://localhost:7474'
 baseURL = ''
 restAPI = "#{baseURL}/db/data"
+ntnURL = "http://tintin-reference.herokuapp.com"
+#ntnURL = "http://localhost:9292"
 
 angular.module('neo4jApp.settings', [])
   .constant('Settings', {
@@ -31,6 +33,9 @@ angular.module('neo4jApp.settings', [])
       rest: restAPI
       cypher: "#{restAPI}/cypher"
       transaction: "#{restAPI}/transaction"
+      login: "#{ntnURL}/browser/login"
+      logout: "#{ntnURL}/logout"
+      ntn: "#{ntnURL}/browser/ajax"
     host: baseURL
     maxExecutionTime: 3600 # in seconds
     heartbeat: 60 # in seconds
