@@ -27,6 +27,7 @@ angular.module('neo4jApp.services')
     _dfd = null
     loggedIn = no
 
+    # iFrame used for login screen (NTN hosted)
     loginFrame = angular.element('<iframe>')
     .attr('name', 'neo4jLogin')
     .attr('allowtransparency', true)
@@ -49,6 +50,7 @@ angular.module('neo4jApp.services')
     )
     .insertAfter('body')
 
+    # iFrame used for communication with the NTN server
     ajaxFrame = angular.element('<iframe>')
     .attr('name', 'neo4jAjax')
     .css(
@@ -67,9 +69,12 @@ angular.module('neo4jApp.services')
     _ajaxConnect = ->
       ajaxFrame.attr('src', Settings.endpoint.ntn)
 
+    # Queue for commands until logged in
     _ajaxDeferred = []
+
     _ajax = (data) ->
       dfd = $q.defer()
+      # Queue up request ad return if not logged in
       if not loggedIn
         _ajaxDeferred.push([data, dfd])
         return dfd.promise
@@ -79,23 +84,24 @@ angular.module('neo4jApp.services')
         type:"ajax",
         data: data,
         success: (data) ->
-          if(data.status < 300)
+          if(199 < data.status < 300)
             dfd.resolve(data.responseJSON, data)
           else
             dfd.reject(data)
       })
       dfd.promise
 
-    # Recieve messages from the login frame
-    # pm.bind 'login.ready', (data) ->
+    # Recieve events from the login frame
+    # See NTN server for available events
 
     pm.bind 'login.close', _close
     pm.bind 'ajax.ready', ->
       loggedIn = yes
       $rootScope.$broadcast('user:authenticated', yes)
       while d = _ajaxDeferred.pop()
-        _ajax(d[0])
-        .then(d[1].resolve, d[1].reject)
+        [data, promise] = d
+        _ajax(data)
+        .then(promise.resolve, promise.reject)
       return
 
     pm.bind 'ajax.failed', ->
@@ -106,6 +112,7 @@ angular.module('neo4jApp.services')
 
     _ajaxConnect()
 
+    # Return module interface
     {
       open: ->
         _dfd = $q.defer()
