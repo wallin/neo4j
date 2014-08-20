@@ -79,10 +79,7 @@ angular.module('neo4jApp.services')
           method: 'PUT'
           url: '/api/v1/store' + (if opts.force then '?force=true' else '')
           data: getStorageJSON()
-        }).then(
-          (response) =>
-            @conflict = no
-            setStorageJSON(response)
+        }).then(@setResponse
           ,
           (xhr, b, c) =>
             # TODO: refactor
@@ -101,13 +98,16 @@ angular.module('neo4jApp.services')
         @sync(force: yes)
 
       resolveWithServer: ->
-        @fetch().then((response) =>
+        @fetch().then(@setResponse)
+
+      setResponse: (response) =>
           @conflict = no
           setStorageJSON(response)
-        )
+          @lastSyncedAt = new Date()
 
       authenticated: no
       conflict: no
+      lastSyncedAt: null
       _currentUser: null
 
 
