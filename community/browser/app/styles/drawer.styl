@@ -50,8 +50,15 @@ indent-hover = 22px
     color: #fff
   h4
     background-color: darken(drawer-color-bg, 15%)
-    line-height: 73px;
-    font-size: 17px;
+    font-size: 17px
+    height: 73px
+    padding-top: 28px
+    &.subtitled
+      padding-top: 19px
+      small
+        display: block
+        font-size: 11px
+        margin-top: 5px
     a.add
       absolute: top -18px right 8px
       font-size: 16px
@@ -65,6 +72,7 @@ indent-hover = 22px
       border-radius: 3px;
       text-shadow: none;
       float: right;
+      margin-top: 12px;
       .fa
         margin-right: 3px
       &:hover
