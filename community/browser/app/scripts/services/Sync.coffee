@@ -90,6 +90,8 @@ angular.module('neo4jApp.services')
                   @resolveWithServer()
                 else
                   @resolveWithLocal()
+              else
+                @inSync = no
             else if status isnt 401
               console.log "NTN request error! (status: #{xhr.status})"
         )
@@ -102,11 +104,13 @@ angular.module('neo4jApp.services')
 
       setResponse: (response) =>
           @conflict = no
+          @inSync = yes
           setStorageJSON(response)
           @lastSyncedAt = new Date()
 
       authenticated: no
       conflict: no
+      inSync: no
       lastSyncedAt: null
       _currentUser: null
 
