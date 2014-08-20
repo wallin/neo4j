@@ -6,11 +6,10 @@ angular.module('neo4jApp')
   (NTN, SyncService, $rootScope) ->
     $rootScope.$on 'user:authenticated', (evt, authenticated) ->
       if authenticated
-        NTN.ajax('/api/v1/me')
+        SyncService.currentUser()
         .then(
           (data) ->
             $rootScope.currentUser = data
-            SyncService.sync()
         ,
           ->
             $rootScope.currentUser = undefined

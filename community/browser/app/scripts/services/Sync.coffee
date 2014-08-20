@@ -24,13 +24,20 @@ angular.module('neo4jApp.services')
 .service 'SyncService', [
   'localStorageService',
   'NTN'
+  'Utils'
   '$rootScope'
-  (localStorageService, NTN, $rootScope) ->
+  (localStorageService, NTN, Utils, $rootScope) ->
+
+    _ignoreSync = no
 
     setStorageJSON = (response) ->
       for k, v of response
         localStorageService.set(k, v)
-      $rootScope.$broadcast 'localStorage:update'
+      # TODO: solve in a nicer way
+      # Avoid recursion
+      _ignoreSync = yes
+      $rootScope.$broadcast 'localStorage:updated'
+      response
 
     getStorageJSON = ->
       keys = localStorageService.keys()
@@ -39,20 +46,67 @@ angular.module('neo4jApp.services')
       JSON.stringify(d)
 
     class SyncService
-      sync: ->
+      constructor: ->
+        # Register listeners for localStorage updates and authentication changes
+        $rootScope.$on 'localStorage:updated', Utils.debounce(=>
+          @sync()
+          _ignoreSync = no
+        , 100)
+        $rootScope.$on 'user:authenticated', (evt, authenticated) =>
+          @authenticated = authenticated
+          @sync() if authenticated
+          @_currentUser = null unless authenticated
+
+      currentUser: ->
+        return @_currentUser if @_currentUser?
+        NTN.ajax('/api/v1/me').then((user) =>
+          @_currentUser = user
+        )
+
+      fetch: ->
+        NTN.ajax({
+          contentType: 'application/json'
+          method: 'GET'
+          url: '/api/v1/store'
+        })
+
+      sync: (force = no) =>
+        return if _ignoreSync
+        return unless @authenticated
         NTN.ajax({
           contentType: 'application/json'
           method: 'PUT'
-          url: '/api/v1/store'
+          url: '/api/v1/store' + (if force then '?force=true' else '')
           data: getStorageJSON()
-        }).then(setStorageJSON)
+        }).then(
+          (response) =>
+            setStorageJSON(response)
+          ,
+          (xhr, b, c) =>
+            # TODO: refactor
+            if xhr.status is 409
+              @conflict = yes
+              if confirm('There was a sync conflict, resolve it?')
+                if confirm('Click ok to choose server version, cancel to choose local')
+                  @resolveWithServer()
+                else
+                  @resolveWithLocal()
+            else
+              alert("Error! (status: #{xhr.status}")
+        )
 
       resolveWithLocal: ->
+        @sync(yes)
 
       resolveWithServer: ->
+        @fetch().then((response) =>
+          @conflict = no
+          setStorageJSON(response)
+        )
 
-      inSync: false
-      conflict: false
+      authenticated: no
+      conflict: no
+      _currentUser: null
 
 
     new SyncService()
