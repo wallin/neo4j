@@ -150,7 +150,7 @@ angular.module('neo4jApp')
       exec: ['NTN', (NTN) ->
         (input, q) ->
           p = NTN.logout()
-          p.then(q.resolve, -> q.reject(message: "Unable to log out"))
+          p.then(q.resolve(), -> q.reject(message: "Unable to log out"))
           q.promise
       ]
 
