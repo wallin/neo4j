@@ -110,6 +110,10 @@ angular.module('neo4jApp.services')
       d[1].reject({}) for d in _ajaxDeferred
       return
 
+    pm.bind 'logout.succeeded', ->
+      _dfd?.resolve()
+      loginFrame.removeAttr('src')
+
     _ajaxConnect()
 
     # Return module interface

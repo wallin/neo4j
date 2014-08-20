@@ -131,13 +131,12 @@ angular.module('neo4jApp')
       type: 'account'
       templateUrl: 'views/frame-login.html'
       matches: ["#{cmdchar}login"]
-      exec: ['NTN', (NTN) ->
-        currentUser =
-          name: 'Johan Brissmyr'
-          email: 'brissmyr@gmail.com'
+      exec: ['CurrentUser', '$rootScope', (CurrentUser, $rootScope) ->
         (input, q) ->
-          NTN.open()
-          .then(q.resolve(currentUser), ->
+          CurrentUser.login()
+          .then(->
+            q.resolve(CurrentUser.instance())
+          , ->
             q.reject(message: "Unable to log in")
           )
           q.promise
@@ -147,10 +146,10 @@ angular.module('neo4jApp')
       type: 'account'
       templateUrl: 'views/frame-logout.html'
       matches: ["#{cmdchar}logout"]
-      exec: ['NTN', (NTN) ->
+      exec: ['CurrentUser', (CurrentUser) ->
         (input, q) ->
-          p = NTN.logout()
-          p.then(q.resolve(), -> q.reject(message: "Unable to log out"))
+          p = CurrentUser.logout()
+          p.then(q.resolve, -> q.reject(message: "Unable to log out"))
           q.promise
       ]
 
