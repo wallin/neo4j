@@ -6,7 +6,7 @@ div(fullscreen)
         .view-result-graph(ng-if='!frame.hasErrors')
           .status-bar
             .status
-              span(ng-show='!frame.isLoading', ng-bind-template="Logged in as {{currentUser.name}} ({{currentUser.email}})")
+              span(ng-show='!frame.isLoading', ng-bind-template="Logged in as {{frame.response.name}} ({{frame.response.email}})")
               span(ng-show='frame.isLoading') Initated login...
 
         .view-result-error.result(ng-if='frame.hasErrors')

@@ -132,9 +132,12 @@ angular.module('neo4jApp')
       templateUrl: 'views/frame-login.html'
       matches: ["#{cmdchar}login"]
       exec: ['NTN', (NTN) ->
+        currentUser =
+          name: 'Johan Brissmyr'
+          email: 'brissmyr@gmail.com'
         (input, q) ->
           NTN.open()
-          .then(q.resolve, ->
+          .then(q.resolve(currentUser), ->
             q.reject(message: "Unable to log in")
           )
           q.promise
