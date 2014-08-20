@@ -27,7 +27,8 @@ angular.module('neo4jApp.controllers')
     'Editor'
     'Frame'
     'Folder'
-    ($scope, Document, Editor, Frame, Folder) ->
+    'SyncService'
+    ($scope, Document, Editor, Frame, Folder, SyncService) ->
       ###*
        * Local methods
       ###
@@ -116,4 +117,6 @@ angular.module('neo4jApp.controllers')
       $scope.editor = Editor
 
       $scope.folderService = Folder
+
+      $scope.syncService = SyncService
   ]
