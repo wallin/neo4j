@@ -106,7 +106,10 @@ angular.module('neo4jApp.controllers')
 
       $scope.folders = nestedFolderStructure()
 
-      $scope.$on 'localStorage:updated', ->
+      $scope.$on 'LocalStorageModule.notification.setitem', ->
+        # Reload folders and documents
+        Folder.fetch()
+        Document.fetch()
         $scope.folders = nestedFolderStructure()
 
       # Expose editor service to be able to play saved scripts

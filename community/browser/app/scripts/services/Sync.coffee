@@ -31,12 +31,11 @@ angular.module('neo4jApp.services')
     _ignoreSync = no
 
     setStorageJSON = (response) ->
-      for k, v of response
-        localStorageService.set(k, v)
       # TODO: solve in a nicer way
       # Avoid recursion
       _ignoreSync = yes
-      $rootScope.$broadcast 'localStorage:updated'
+      for k, v of response
+        localStorageService.set(k, v)
       response
 
     getStorageJSON = ->
@@ -48,7 +47,9 @@ angular.module('neo4jApp.services')
     class SyncService
       constructor: ->
         # Register listeners for localStorage updates and authentication changes
-        $rootScope.$on 'localStorage:updated', Utils.debounce(=>
+        $rootScope.$on 'LocalStorageModule.notification.setitem', Utils.debounce((evt, item) =>
+          # Only sync folders
+          return unless item.key in ['documents', 'folders']
           @sync()
           _ignoreSync = no
         , 100)
@@ -70,16 +71,17 @@ angular.module('neo4jApp.services')
           url: '/api/v1/store'
         })
 
-      sync: (force = no) =>
+      sync: (opts = {}) =>
         return if _ignoreSync
         return unless @authenticated
         NTN.ajax({
           contentType: 'application/json'
           method: 'PUT'
-          url: '/api/v1/store' + (if force then '?force=true' else '')
+          url: '/api/v1/store' + (if opts.force then '?force=true' else '')
           data: getStorageJSON()
         }).then(
           (response) =>
+            @conflict = no
             setStorageJSON(response)
           ,
           (xhr, b, c) =>
@@ -92,11 +94,11 @@ angular.module('neo4jApp.services')
                 else
                   @resolveWithLocal()
             else if status isnt 401
-              console.log "NTN request error! (status: #{xhr.status}"
+              console.log "NTN request error! (status: #{xhr.status})"
         )
 
       resolveWithLocal: ->
-        @sync(yes)
+        @sync(force: yes)
 
       resolveWithServer: ->
         @fetch().then((response) =>

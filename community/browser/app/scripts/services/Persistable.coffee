@@ -49,7 +49,7 @@ angular.module('neo4jApp.services')
         # Save all items
         @save: (data) ->
           localStorageService.set(@storageKey, JSON.stringify(data))
-          $rootScope.$broadcast "localStorage:updated"
+          #$rootScope.$broadcast "localStorage:updated"
 
       Persistable
   ]
