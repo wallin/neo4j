@@ -12,7 +12,7 @@
     li(ng-class='{active: showingDrawer("info") }')
       a.fa.fa-info-circle(ng-click='toggleDrawer("info")')
   ul.nav.bottom
-    li(ng-class='{active: showingDrawer("profile") }', ng-if='currentUser')
+    li.nav-user(ng-class='{active: showingDrawer("profile") }', ng-if='currentUser')
       a(ng-click='toggleDrawer("profile")')
         &nbsp;
         .avatar(ng-style='{"background-image": "url("+currentUser.image+")"}', ng-if='currentUser.image')
