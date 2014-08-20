@@ -91,8 +91,8 @@ angular.module('neo4jApp.services')
                   @resolveWithServer()
                 else
                   @resolveWithLocal()
-            else
-              alert("Error! (status: #{xhr.status}")
+            else if status isnt 401
+              console.log "NTN request error! (status: #{xhr.status}"
         )
 
       resolveWithLocal: ->
