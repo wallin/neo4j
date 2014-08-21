@@ -2,7 +2,7 @@ h4(ng-class='{subtitled: currentUser}')
   .pull-left Saved scripts
     small(ng-if='syncService.inSync') Synced&nbsp;
       span(am-time-ago='syncService.lastSyncedAt')
-    small.error(ng-if='!syncService.inSync', ng-click='syncService.sync()')
+    small.error(ng-if='!syncService.inSync', ng-click='syncService.push()')
       a Out of sync
   a.create-folder(ng-click='folderService.create()')
     .fa.fa-plus

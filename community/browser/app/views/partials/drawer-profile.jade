@@ -2,3 +2,8 @@ h4(ng-bind='currentUser.name')
 .inner
   p
     a Log out
+  p(ng-if="currentUser")
+    a(ng-click="syncService.push()") Push to server
+    |,
+    a(ng-click="syncService.fetchAndUpdate(yes)") Fetch from server
+
