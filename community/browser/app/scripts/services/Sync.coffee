@@ -60,15 +60,7 @@ angular.module('neo4jApp.services')
 
         $rootScope.$on 'user:authenticated', (evt, authenticated) =>
           @authenticated = authenticated
-          @_currentUser = null unless authenticated
           @fetchAndUpdate() if authenticated
-
-
-      currentUser: ->
-        return @_currentUser if @_currentUser?
-        NTN.ajax('/api/v1/me').then((user) =>
-          @_currentUser = user
-        )
 
       fetchAndUpdate: (autoConfirm = no) =>
         currentTimestamp = parseInt(localStorageService.get('updated_at'), 10)
@@ -87,13 +79,13 @@ angular.module('neo4jApp.services')
           url: '/api/v1/store'
         })
 
-      push: (opts = {}) =>
+      push: =>
         #return if _ignoreSync
         return unless @authenticated
         NTN.ajax({
           contentType: 'application/json'
           method: 'PUT'
-          url: '/api/v1/store' + (if opts.force then '?force=true' else '')
+          url: '/api/v1/store?force=true'
           data: getStorageJSON()
         }).then(=> @fetchAndUpdate(yes) )
 
@@ -109,8 +101,6 @@ angular.module('neo4jApp.services')
       conflict: no
       inSync: no
       lastSyncedAt: null
-      _currentUser: null
-
 
     new SyncService()
 ]

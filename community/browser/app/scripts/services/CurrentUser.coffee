@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 angular.module('neo4jApp.services')
 .service 'CurrentUser', [
-  'Settings', 'NTN', '$rootScope'
-  (Settings, NTN, $rootScope) ->
+  'Settings', 'NTN',
+  (Settings, NTN) ->
     class CurrentUser
       fetch: =>
         NTN.ajax('/api/v1/me').then((user) =>
